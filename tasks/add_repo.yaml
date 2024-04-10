@@ -1,10 +1,38 @@
 ---
-# Required variables: file, url, params, optional arch
+# Required variables: file, url, params, and arch
 - name: Vars
   debug:
-    msg: "file {{ file }} url {{ url }} arch {{ arch }}"
+    msg: "name {{ name }} url {{ url }} params {{ params }} arch {{ arch }}"
   tags:
     never, debug
+
+- set_fact:
+    repo_file: "{{ name }}.list"
+  when: repo_name is undefined
+- set_fact:
+    gpg_file: "{{ name }}.gpg"
+  when: gpg_file is undefined
+- set_fact:
+    gpg_file_path: "/etc/apt/trusted.gpg.d/{{ gpg_file }}"
+    repo_file_path: "/etc/apt/sources.list.d/{{ repo_file }}"
+
+- name: Find sources containing the same url that is to be added 
+  find:
+    path: /etc/apt/sources.list.d
+    contains: "{{ url }}"
+  register: existing_repo
+
+- name: Data from duplicate repo files.
+  debug:
+    var: lookup('ansible.builtin.file', item)
+  loop: "{{ existing_repo.files | map(attributes='path') | list }}"
+  when: item |= repo_file
+- name: Deleting duplicate repo files.
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ existing_repo.files | map(attributes='path') | list }}"
+  when: item |= repo_file
 
 - name: Ensuring /etc/apt/trusted.gpg.d is created correctly.
   file:
@@ -15,19 +43,24 @@
     group: root
   run_once: true
 
-- name: "Adding pgp file {{ file }}."
+- name: "Adding pgp file {{ gpg_file }}."
   copy:
-    src: "files/{{ file }}"
-    dest: "/etc/apt/trusted.gpg.d/{{ file }}"
+    src: "files/{{ gpg_file }}"
+    dest: "{{ gpg_file_path }}"
     mode: 0644
     owner: root
     group: root
 
-- name: Determine architecture.
-  set_fact:
+- set_fact:
     aptarch: "{{ ' arch=' + arch if (arch | length > 0) else ''}}"
-- name: "Adding APT source: deb [arch={{ arch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
-  ansible.builtin.apt_repository:
-    repo: "deb [{{ aptarch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
-    state: present
-
+- debug:
+    msg: "Creating APT source file {{ repo_file_path }} with: deb [arch={{ arch }} signed-by={{ gpg_file_path }}] {{ url }} {{ params }}"
+- copy:
+    dest: "{{ repo_file_path }}"
+    content: "deb [{{ aptarch }} signed-by={{ gpg_file_path }}] {{ url }} {{ params }}"
+- name: Ensure repo permissions.
+  file:
+    path: "{{ repo_file_path }}"
+    mode: 0644
+    owner: root
+    group: root

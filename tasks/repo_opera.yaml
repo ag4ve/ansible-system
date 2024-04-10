@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    file: opera.gpg
+    name: opera
     url: "http://deb.opera.com/opera-stable/"
     params: "stable non-free"
     arch: amd64

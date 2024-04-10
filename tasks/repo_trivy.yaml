@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    file: trivy.gpg
+    name: trivy
     url: "https://aquasecurity.github.io/trivy-repo/deb"
     params: "{{ ansible_distribution_release }} main"
     arch: amd64

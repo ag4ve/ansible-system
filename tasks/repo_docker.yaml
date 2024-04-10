@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    file: docker.gpg
+    name: docker
     url: "https://download.docker.com/linux/ubuntu"
     params: "focal stable"
     arch: amd64

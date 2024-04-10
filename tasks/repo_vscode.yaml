@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    file: packages.microsoft.gpg
+    name: vscode
     url: "https://packages.microsoft.com/repos/code"
     params: "stable non-free"
     arch: amd64
