@@ -8,10 +8,7 @@
 
 - set_fact:
     repo_file: "{{ name }}.list"
-  when: repo_name is undefined
-- set_fact:
     gpg_file: "{{ name }}.gpg"
-  when: gpg_file is undefined
 - set_fact:
     gpg_file_path: "/etc/apt/trusted.gpg.d/{{ gpg_file }}"
     repo_file_path: "/etc/apt/sources.list.d/{{ repo_file }}"

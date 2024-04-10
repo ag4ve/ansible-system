@@ -6,4 +6,4 @@
   include_tasks: main.yaml
   vars:
     pkgs:
-      opera: "9999"
+      opera-stable: "9999"
