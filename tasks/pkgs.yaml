@@ -1,0 +1,25 @@
+---
+- name: Install specific version packages.
+  apt:
+    name: "{{ item.key }}={{ item.value }}"
+    state: present
+    allow_downgrade: yes
+  with_dict: "{{ pkgs }}"
+  when:
+    - item.value | length > 0
+    - item.value is version("0", ">")
+    - item.value is version("9999", "!=")
+- name: Install latest packages.
+  apt:
+    name: "{{ item.key }}"
+    state: present
+  with_dict: "{{ pkgs }}"
+  when:
+    - item.value is version("9999", "==")
+- name: Remove packages.
+  apt:
+    name: "{{ item.key }}"
+    state: absent
+  with_dict: "{{ pkgs }}"
+  when:
+    - item.value is version("0", "==") or item.value | length == 0

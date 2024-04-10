@@ -1,0 +1,8 @@
+---
+- set_fact:
+    file: docker.gpg
+    url: "https://download.docker.com/linux/ubuntu"
+    params: "focal stable
+    arch: amd64
+- name: Apt source for Docker
+  include_tasks: add_repo.yaml

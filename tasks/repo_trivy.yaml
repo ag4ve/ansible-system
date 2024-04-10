@@ -1,0 +1,8 @@
+---
+- set_fact:
+    file: trivy.gpg
+    url: "https://aquasecurity.github.io/trivy-repo/deb"
+    params: "{{ ansible_distribution_release }} main"
+    arch: amd64
+- name: Apt source for Opera
+  include_tasks: add_repo.yaml

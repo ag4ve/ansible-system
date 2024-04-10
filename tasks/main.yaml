@@ -1,0 +1,21 @@
+---
+- name: Ensuring /etc/apt/trusted.gpg.d is created correctly
+  file:
+    path: /etc/apt/trusted.gpg.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  run_once: true
+- name: Apt update and upgrade.
+  apt:
+    upgrade: dist
+    update_cache: yes
+  run_once: True
+- name: Adding and/or removing packages.
+  block:
+  - include_tasks: pkgs.yaml
+  when: ( pkgs is mapping )
+- debug:
+    msg: The pkgs dictionary was not defined - no packages were updated.
+  when: ( pkgs is not mapping )

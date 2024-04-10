@@ -1,0 +1,9 @@
+---
+- name: Add Trivy repo.
+  include_tasks: repo_trivy.yaml
+  run_once: true
+- name: Run main task
+  include_tasks: main.yaml
+  vars:
+    pkgs:
+      trivy: "9999"

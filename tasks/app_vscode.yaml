@@ -1,0 +1,9 @@
+---
+- name: Add VSCode repo.
+  include_tasks: repo_vscode.yaml
+  run_once: true
+- name: Run main task
+  include_tasks: main.yaml
+  vars:
+    pkgs:
+      code: "9999"

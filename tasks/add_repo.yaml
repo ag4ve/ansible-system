@@ -1,0 +1,33 @@
+---
+# Required variables: file, url, params, optional arch
+- name: Vars
+  debug:
+    msg: "file {{ file }} url {{ url }} arch {{ arch }}"
+  tags:
+    never, debug
+
+- name: Ensuring /etc/apt/trusted.gpg.d is created correctly.
+  file:
+    path: /etc/apt/trusted.gpg.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  run_once: true
+
+- name: "Adding pgp file {{ file }}."
+  copy:
+    src: "files/{{ file }}"
+    dest: "/etc/apt/trusted.gpg.d/{{ file }}"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Determine architecture.
+  set_fact:
+    aptarch: "{{ ' arch=' . arch if (arch | length > 0) else ''}}"
+- name: "Adding APT source: deb [arch={{ arch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
+  ansible.builtin.apt_repository:
+    repo: "deb [{{ aptarch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
+    state: present
+

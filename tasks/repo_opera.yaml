@@ -1,0 +1,8 @@
+---
+- set_fact:
+    file: opera.gpg
+    url: "http://deb.opera.com/opera-stable/"
+    params: "stable non-free"
+    arch: amd64
+- name: Apt source for Opera
+  include_tasks: add_repo.yaml

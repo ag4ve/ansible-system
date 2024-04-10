@@ -1,0 +1,9 @@
+---
+- name: Add Opera repo.
+  include_tasks: repo_opera.yaml
+  run_once: true
+- name: Run main task
+  include_tasks: main.yaml
+  vars:
+    pkgs:
+      opera: "9999"

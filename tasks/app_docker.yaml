@@ -1,0 +1,10 @@
+---
+- name: Add Docker repo.
+  include_tasks: repo_docker.yaml
+  run_once: true
+- name: Run main task
+  include_tasks: main.yaml
+  vars:
+    pkgs:
+      docker: "0"
+      docker-ce: "9999"
