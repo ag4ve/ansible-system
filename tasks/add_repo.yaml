@@ -25,7 +25,7 @@
 
 - name: Determine architecture.
   set_fact:
-    aptarch: "{{ ' arch=' . arch if (arch | length > 0) else ''}}"
+    aptarch: "{{ ' arch=' + arch if (arch | length > 0) else ''}}"
 - name: "Adding APT source: deb [arch={{ arch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
   ansible.builtin.apt_repository:
     repo: "deb [{{ aptarch }} signed-by=/etc/apt/trusted.gpg.d/{{ file }}] {{ url }} {{ params }}"
